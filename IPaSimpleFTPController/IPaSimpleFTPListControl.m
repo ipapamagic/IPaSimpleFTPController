@@ -12,10 +12,10 @@
 {
     NSInputStream * inputStream;
     NSMutableData *receiveData;
-    void (^getEntriesCB)(NSArray*,NSURL*);
-    void (^completesCB)(NSURL*);
+    void (^getEntriesCB)(NSArray*);
+    void (^completesCB)();
 }
-@synthesize currentURL;
+
 -(void)stop
 {
     if (inputStream) {
@@ -27,7 +27,7 @@
 
     }
 }
--(void)LoadListForURL:(NSURL*)url getEntries:(void (^)(NSArray*,NSURL*))getEntries completes:(void (^)(NSURL*))completes
+-(void)LoadListForURL:(NSURL*)url getEntries:(void (^)(NSArray*))getEntries completes:(void (^)())completes
 {
     [self stop];
     if (getEntries) {
@@ -39,10 +39,17 @@
 
     
     CFReadStreamRef     ftpStream;
-    currentURL = [url copy];
     ftpStream = CFReadStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) url);
+    
+    
+    CFReadStreamSetProperty(ftpStream, kCFStreamPropertyFTPUsePassiveMode, (self.isPassiveMode)?kCFBooleanTrue:kCFBooleanFalse);
+    
     inputStream = (__bridge_transfer NSInputStream*)ftpStream;
     inputStream.delegate = self;
+    
+    
+    
+    
     
     receiveData = [NSMutableData data];
     [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
@@ -58,19 +65,21 @@
     bytesRead = [inputStream read:buffer maxLength:sizeof(buffer)];
     if (bytesRead == -1) {
         NSLog(@"Network read error");
+        [self stop];
+        [self destroyStreamControl];
     } else if (bytesRead == 0) {
         //傳輸完成
 
         if (completesCB) {
-            void (^complete)(NSURL*) = [completesCB copy];
+            void (^complete)() = [completesCB copy];
             [self stop];
-            complete(currentURL);
+            complete();
         }
         else {
             [self stop];
         }
 
-
+        [self destroyStreamControl];
     } else {
         assert(receiveData != nil);
         
@@ -85,7 +94,7 @@
         
         if (newEntries.count != 0) {
             if (getEntriesCB) {
-                getEntriesCB(newEntries,currentURL);
+                getEntriesCB(newEntries);
             }
 
         }
@@ -105,7 +114,12 @@
 }
 -(void)handleErrorOccurred:(NSStream *)aStream
 {
+    NSError *theError = [aStream streamError];
+    
+    
+    NSLog(@"List Stream Error occur!:%@",theError);
     [self stop];
+    [self destroyStreamControl];
 }
 #pragma mark - NSStreamDelegate
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
@@ -134,7 +148,7 @@
     // Try to get the name, convert it back to MacRoman, and then reconvert it 
     // with the preferred encoding.
     
-    name = [entry objectForKey:(id) kCFFTPResourceName];
+    name = entry[(id) kCFFTPResourceName];
     if (name != nil) {
         assert([name isKindOfClass:[NSString class]]);
         
@@ -157,7 +171,7 @@
         newEntry = [entry mutableCopy];
         assert(newEntry != nil);
         
-        [newEntry setObject:newName forKey:(id) kCFFTPResourceName];
+        newEntry[(id) kCFFTPResourceName] = newName;
         
         result = newEntry;
     }

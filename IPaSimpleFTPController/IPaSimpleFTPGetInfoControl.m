@@ -34,6 +34,7 @@
     currentURL = [url copy];
     ftpStream = CFReadStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) url);
     CFReadStreamSetProperty(ftpStream, kCFStreamPropertyFTPFetchResourceInfo, kCFBooleanTrue); // Added: To get file info
+    CFReadStreamSetProperty(ftpStream, kCFStreamPropertyFTPUsePassiveMode, (self.isPassiveMode)?kCFBooleanTrue:kCFBooleanFalse);
     inputStream = (__bridge_transfer NSInputStream*)ftpStream;
     inputStream.delegate = self;
     
@@ -59,7 +60,7 @@
     for (NSString* key in InfoKeyList) {
         id result = [inputStream propertyForKey:key];
         if (result != nil) {
-            [infoList setObject:result forKey:key];
+            infoList[key] = result;
         }
     }
 
@@ -71,7 +72,7 @@
     else {
         [self stop];
     }
-
+    [self destroyStreamControl];
 }
 -(void)handleEndEncountered:(NSStream *)aStream
 {
@@ -101,6 +102,7 @@
     else {
         [self stop];
     }
+    [self destroyStreamControl];
 }
 
 #pragma mark - NSStreamDelegate

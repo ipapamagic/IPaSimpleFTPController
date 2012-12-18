@@ -12,7 +12,11 @@
 {
     NSInputStream *             inputStream;
     NSOutputStream *            outputStream;
+    size_t downloadDataSize;
+    size_t currentBufferWritten;
+    NSURL *currentURL;
     void (^completeCB)(IPaSimpleFTPDownloadControlResultCode);
+    void (^progressCB)(CGFloat);
 }
 
 -(void)stop
@@ -31,17 +35,22 @@
 
     }
     completeCB = nil;
+    progressCB = nil;
+    currentURL = nil;
 
 }
--(void)downloadURL:(NSURL*)URL toFilePath:(NSString*)filePath complete:(void (^)(IPaSimpleFTPDownloadControlResultCode))complete
+-(void)downloadURL:(NSURL*)URL toFilePath:(NSString*)filePath complete:(void (^)(IPaSimpleFTPDownloadControlResultCode))complete progressCallback:(void (^)(CGFloat))progressCallback
 {
     [self stop];
     if (complete != nil) {
         completeCB = [complete copy];
     }
+    if (progressCallback != nil) {
+        progressCB = [progressCallback copy];
+    }
     // Open a stream for the file we're going to receive into.
     
-
+    currentURL = [URL copy];    
     
     outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
     assert(outputStream != nil);
@@ -52,12 +61,24 @@
     
     CFReadStreamRef ftpStream = CFReadStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) URL);
     assert(ftpStream != NULL);
+    CFReadStreamSetProperty(ftpStream, kCFStreamPropertyFTPFetchResourceInfo, kCFBooleanTrue); // Added: To get file info
+    CFReadStreamSetProperty(ftpStream, kCFStreamPropertyFTPUsePassiveMode, (self.isPassiveMode)?kCFBooleanTrue:kCFBooleanFalse);
+    
     
     inputStream = (__bridge_transfer NSInputStream *) ftpStream;
     
     inputStream.delegate = self;
     [inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     [inputStream open];
+    
+}
+
+-(void)handleOpenCompleted:(NSStream *)aStream
+{
+    NSNumber *dataSize = [inputStream propertyForKey:(id)kCFStreamPropertyFTPResourceSize];
+    
+    downloadDataSize = [dataSize longLongValue];
+    currentBufferWritten = 0;
     
 }
 -(void)handleHasBytesAvailableWithStream:(NSStream *)aStream
@@ -72,11 +93,12 @@
         void (^complete)(IPaSimpleFTPDownloadControlResultCode) = completeCB;
         [self stop];
         complete(IPaSimpleFTPDownloadControlResultCode_ReadFail);
+        [self destroyStreamControl];
     } else if (bytesRead == 0) {
         void (^complete)(IPaSimpleFTPDownloadControlResultCode) = completeCB;
         [self stop];
         complete(IPaSimpleFTPDownloadControlResultCode_Complete);
-        
+        [self destroyStreamControl];
     } else {
         NSInteger   bytesWritten;
         NSInteger   bytesWrittenSoFar;
@@ -91,12 +113,19 @@
                 void (^complete)(IPaSimpleFTPDownloadControlResultCode) = completeCB;
                 [self stop];
                 complete(IPaSimpleFTPDownloadControlResultCode_WriteFail);
+                [self destroyStreamControl];
                 break;
             } else {
                 bytesWrittenSoFar += bytesWritten;
                 
             }
         } while (bytesWrittenSoFar != bytesRead);
+        currentBufferWritten += bytesWrittenSoFar;
+        
+        
+        if (progressCB) {
+            progressCB((CGFloat)(currentBufferWritten / (CGFloat)downloadDataSize));
+        }
     }
 }
 #pragma mark - NSStreamDelegate

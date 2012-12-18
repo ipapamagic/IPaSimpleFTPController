@@ -24,7 +24,7 @@
     getInfoControl = [[IPaSimpleFTPGetInfoControl alloc] init];
 
     
-    [getInfoControl getInfoFromURL:URL WithKeyList:[NSArray arrayWithObject:(id)kCFStreamPropertyFTPResourceSize] 
+    [getInfoControl getInfoFromURL:URL WithKeyList:@[(id)kCFStreamPropertyFTPResourceSize] 
                          completes:^(NSDictionary *infoList){
                              //有存在Folder
                              //回傳0代表目錄已存在 
@@ -33,7 +33,7 @@
                                  complete(IPaSimpleFTPCreateFolderControlResultCode_FolderExist);
                              }
                              
-                             
+                             [self destroyStreamControl];
                              
                          }fail:^(){
                              //其他錯誤
@@ -43,6 +43,7 @@
                             //不存在Folder
                                  //建立folder
                              CFWriteStreamRef ftpStream = CFWriteStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) URL);
+                             CFWriteStreamSetProperty(ftpStream, kCFStreamPropertyFTPUsePassiveMode, (self.isPassiveMode)?kCFBooleanTrue:kCFBooleanFalse);
                              assert(ftpStream != NULL);
                              outputStream = (__bridge NSOutputStream*)ftpStream;
                              outputStream.delegate = self;
@@ -105,7 +106,7 @@
     }
 
 
-
+    [self destroyStreamControl];
 }
 -(void)handleEndEncountered:(NSStream *)aStream
 {
@@ -119,7 +120,7 @@
     }
     //建立完成，回傳1
     
-    
+    [self destroyStreamControl];
     
 }
 #pragma mark - NSStreamDelegate

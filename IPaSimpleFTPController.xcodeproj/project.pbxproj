@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E2125A815898BB300040FA2 /* IPaSimpleFTPController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21259815898BB200040FA2 /* IPaSimpleFTPController.h */; };
-		6E2125A915898BB300040FA2 /* IPaSimpleFTPController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21259915898BB200040FA2 /* IPaSimpleFTPController.m */; };
 		6E2125AA15898BB300040FA2 /* IPaSimpleFTPStreamControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21259A15898BB200040FA2 /* IPaSimpleFTPStreamControl.h */; };
 		6E2125AB15898BB300040FA2 /* IPaSimpleFTPStreamControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21259B15898BB200040FA2 /* IPaSimpleFTPStreamControl.m */; };
 		6E2125AC15898BB300040FA2 /* IPaSimpleFTPListControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21259C15898BB200040FA2 /* IPaSimpleFTPListControl.h */; };
@@ -23,12 +21,13 @@
 		6E2125B515898BB300040FA2 /* IPaSimpleFTPPutDataControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2125A515898BB200040FA2 /* IPaSimpleFTPPutDataControl.m */; };
 		6E2125B615898BB300040FA2 /* IPaSimpleFTPDownloadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E2125A615898BB200040FA2 /* IPaSimpleFTPDownloadControl.h */; };
 		6E2125B715898BB300040FA2 /* IPaSimpleFTPDownloadControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E2125A715898BB200040FA2 /* IPaSimpleFTPDownloadControl.m */; };
+		6EA66C9C16806D4100F55474 /* IPaSimpleFTPStreamControlDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA66C9B16806D4100F55474 /* IPaSimpleFTPStreamControlDefine.h */; };
+		6EA66C9F16806D4A00F55474 /* IPaSimpleFTP.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA66C9D16806D4A00F55474 /* IPaSimpleFTP.h */; };
+		6EA66CA016806D4A00F55474 /* IPaSimpleFTP.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA66C9E16806D4A00F55474 /* IPaSimpleFTP.m */; };
 		6EC87815157C69C900821DB1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EC87814157C69C800821DB1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6E21259815898BB200040FA2 /* IPaSimpleFTPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPaSimpleFTPController.h; sourceTree = "<group>"; };
-		6E21259915898BB200040FA2 /* IPaSimpleFTPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPaSimpleFTPController.m; sourceTree = "<group>"; };
 		6E21259A15898BB200040FA2 /* IPaSimpleFTPStreamControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPaSimpleFTPStreamControl.h; sourceTree = "<group>"; };
 		6E21259B15898BB200040FA2 /* IPaSimpleFTPStreamControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPaSimpleFTPStreamControl.m; sourceTree = "<group>"; };
 		6E21259C15898BB200040FA2 /* IPaSimpleFTPListControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPaSimpleFTPListControl.h; sourceTree = "<group>"; };
@@ -43,6 +42,9 @@
 		6E2125A515898BB200040FA2 /* IPaSimpleFTPPutDataControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPaSimpleFTPPutDataControl.m; sourceTree = "<group>"; };
 		6E2125A615898BB200040FA2 /* IPaSimpleFTPDownloadControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPaSimpleFTPDownloadControl.h; sourceTree = "<group>"; };
 		6E2125A715898BB200040FA2 /* IPaSimpleFTPDownloadControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPaSimpleFTPDownloadControl.m; sourceTree = "<group>"; };
+		6EA66C9B16806D4100F55474 /* IPaSimpleFTPStreamControlDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPaSimpleFTPStreamControlDefine.h; sourceTree = "<group>"; };
+		6EA66C9D16806D4A00F55474 /* IPaSimpleFTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPaSimpleFTP.h; sourceTree = "<group>"; };
+		6EA66C9E16806D4A00F55474 /* IPaSimpleFTP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPaSimpleFTP.m; sourceTree = "<group>"; };
 		6EC87811157C69C800821DB1 /* libIPaSimpleFTPController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libIPaSimpleFTPController.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC87814157C69C800821DB1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6EC87818157C69C900821DB1 /* IPaSimpleFTPController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IPaSimpleFTPController-Prefix.pch"; sourceTree = "<group>"; };
@@ -109,9 +111,10 @@
 		6EC87816157C69C900821DB1 /* IPaSimpleFTPController */ = {
 			isa = PBXGroup;
 			children = (
+				6EA66C9D16806D4A00F55474 /* IPaSimpleFTP.h */,
+				6EA66C9E16806D4A00F55474 /* IPaSimpleFTP.m */,
+				6EA66C9B16806D4100F55474 /* IPaSimpleFTPStreamControlDefine.h */,
 				6E4A0F701647BE0C00DEEEC1 /* FTP Command */,
-				6E21259815898BB200040FA2 /* IPaSimpleFTPController.h */,
-				6E21259915898BB200040FA2 /* IPaSimpleFTPController.m */,
 				6EC87817157C69C900821DB1 /* Supporting Files */,
 			);
 			path = IPaSimpleFTPController;
@@ -132,7 +135,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E2125A815898BB300040FA2 /* IPaSimpleFTPController.h in Headers */,
 				6E2125AA15898BB300040FA2 /* IPaSimpleFTPStreamControl.h in Headers */,
 				6E2125AC15898BB300040FA2 /* IPaSimpleFTPListControl.h in Headers */,
 				6E2125AE15898BB300040FA2 /* IPaSimpleFTPDeleteControl.h in Headers */,
@@ -140,6 +142,8 @@
 				6E2125B215898BB300040FA2 /* IPaSimpleFTPCreateFolderControl.h in Headers */,
 				6E2125B415898BB300040FA2 /* IPaSimpleFTPPutDataControl.h in Headers */,
 				6E2125B615898BB300040FA2 /* IPaSimpleFTPDownloadControl.h in Headers */,
+				6EA66C9C16806D4100F55474 /* IPaSimpleFTPStreamControlDefine.h in Headers */,
+				6EA66C9F16806D4A00F55474 /* IPaSimpleFTP.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +197,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E2125A915898BB300040FA2 /* IPaSimpleFTPController.m in Sources */,
 				6E2125AB15898BB300040FA2 /* IPaSimpleFTPStreamControl.m in Sources */,
 				6E2125AD15898BB300040FA2 /* IPaSimpleFTPListControl.m in Sources */,
 				6E2125AF15898BB300040FA2 /* IPaSimpleFTPDeleteControl.m in Sources */,
@@ -201,6 +204,7 @@
 				6E2125B315898BB300040FA2 /* IPaSimpleFTPCreateFolderControl.m in Sources */,
 				6E2125B515898BB300040FA2 /* IPaSimpleFTPPutDataControl.m in Sources */,
 				6E2125B715898BB300040FA2 /* IPaSimpleFTPDownloadControl.m in Sources */,
+				6EA66CA016806D4A00F55474 /* IPaSimpleFTP.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

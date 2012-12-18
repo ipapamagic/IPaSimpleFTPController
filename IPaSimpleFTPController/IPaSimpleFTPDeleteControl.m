@@ -110,6 +110,8 @@
                                            deleteSucceedCB(URL);
                                        }deleteFail:^(SInt32 errorCode){
                                            deleteFailCB(errorCode);
+                                           [self stop];
+                                           [self destroyStreamControl];
                                        }];
     }
 }
@@ -134,10 +136,10 @@
     }
     RemovingQueue = [NSMutableArray array];
     _deletingFolderURL = [url copy];
-    [ListControl LoadListForURL:url getEntries:^(NSArray* newEntries,NSURL* URL){
+    [ListControl LoadListForURL:url getEntries:^(NSArray* newEntries){
         for (NSDictionary *entry in newEntries) {
-            NSNumber *resourceType = [entry objectForKey:(__bridge NSString*)kCFFTPResourceType];
-            NSString *urlString = [URL.absoluteString stringByAppendingString:[entry objectForKey:(__bridge NSString*)kCFFTPResourceName]];
+            NSNumber *resourceType = entry[(__bridge NSString*)kCFFTPResourceType];
+            NSString *urlString = [url.absoluteString stringByAppendingString:entry[(__bridge NSString*)kCFFTPResourceName]];
             urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             if ([resourceType integerValue]== 4) {
                 urlString = [urlString stringByAppendingString:@"/"];
@@ -204,14 +206,17 @@
                                                if (deleteFailCB) {
                                                    deleteFailCB(errorCode);
                                                }
+                                               [self stop];
+                                               [self destroyStreamControl];
                                            }];
-            //中斷，等folder刪除完成在繼續
+            
             break;
         }
         else {
             SInt32 errorCode;
             if (![self DeleteURL:url errorCode:&errorCode]) {
                 [self stop];
+                [self destroyStreamControl];
                 return;                
             }
 
@@ -222,6 +227,7 @@
         if (![self DeleteURL:self.deletingFolderURL errorCode:&errorCode])
         {
             [self stop];
+            [self destroyStreamControl];
             return;
         }
          
@@ -237,7 +243,7 @@
     else {
         [self stop];
     }
-    
+    [self destroyStreamControl];
     
 }
 

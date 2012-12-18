@@ -10,7 +10,7 @@
 #import "IPaSimpleFTPStreamControl.h"
 @interface IPaSimpleFTPListControl : IPaSimpleFTPStreamControl 
 
-@property (nonatomic,readonly) NSURL* currentURL;
--(void)LoadListForURL:(NSURL*)url getEntries:(void (^)(NSArray*,NSURL*))getEntries completes:(void (^)(NSURL*))completes;
+
+-(void)LoadListForURL:(NSURL*)url getEntries:(void (^)(NSArray*))getEntries completes:(void (^)())completes;
 
 @end

@@ -9,30 +9,54 @@
 #import "IPaSimpleFTPStreamControl.h"
 
 @implementation IPaSimpleFTPStreamControl
+{
+    NSUInteger streamControlID;
+}
++(NSMutableDictionary*)streamControlList
+{
+    static NSMutableDictionary *streamControlList = nil;
+    if (streamControlList == nil) {
+        streamControlList = [@{} mutableCopy];
+    }
+    return streamControlList;
+}
+-(id)init
+{
+    self = [super init];
+    static NSUInteger streamIDCounter = 1;
+    
+    streamControlID = streamIDCounter++;
+    NSMutableDictionary *streamControlList = [IPaSimpleFTPStreamControl streamControlList];
+    streamControlList[@(streamControlID)] = self;
+    return self;
+}
+
+
+-(id)initWithDelegate:(id <IPaSimpleFTPStreamControlDelegate>) delegate
+{
+    self = [self init];
+ 
+    
+    self.delegate = delegate;
+    return self;
+}
+-(void)destroyStreamControl
+{
+    NSMutableDictionary *streamControlList = [IPaSimpleFTPStreamControl streamControlList];
+    
+    [streamControlList removeObjectForKey:@(streamControlID)];
+}
 -(void)stop
 {
     
 }
--(void)handleOpenCompleted:(NSStream *)aStream
+-(NSUInteger)streamControlID
 {
-    
+    return streamControlID;
 }
--(void)handleHasBytesAvailableWithStream:(NSStream *)aStream
+-(BOOL)isPassiveMode
 {
-    
-}
-
--(void)handleHasSpaceAvailableWithStream:(NSStream *)aStream
-{
-    
-}
--(void)handleErrorOccurred:(NSStream *)aStream
-{
-    
-}
--(void)handleEndEncountered:(NSStream *)aStream
-{
-    
+    return [self.delegate isIPaSimpleFTPStreamPassiveMode:self];
 }
 -(void)dealloc
 {
@@ -44,26 +68,33 @@
 
     switch (eventCode) {
         case NSStreamEventOpenCompleted: {
-            [self handleOpenCompleted:aStream];
+            if ([self respondsToSelector:@selector(handleOpenCompleted:)]) {
+                [self handleOpenCompleted:aStream];
+            }
+
         }   
             break;
         case NSStreamEventHasBytesAvailable: {
-            
-            [self handleHasBytesAvailableWithStream:aStream];
+            if ([self respondsToSelector:@selector(handleHasBytesAvailableWithStream:)]) {
+                [self handleHasBytesAvailableWithStream:aStream];
+            }
         }
             break;
         case NSStreamEventHasSpaceAvailable: {
-            [self handleHasSpaceAvailableWithStream:aStream];
-        } 
+            if ([self respondsToSelector:@selector(handleHasSpaceAvailableWithStream:)]) {
+                [self handleHasSpaceAvailableWithStream:aStream];
+            }
+        }
             break;
         case NSStreamEventErrorOccurred: {
-            
-            [self handleErrorOccurred:aStream];
-            [self stop];
+            if ([self respondsToSelector:@selector(handleErrorOccurred:)]) {
+                [self handleErrorOccurred:aStream];
+            }
         } break;
         case NSStreamEventEndEncountered: {
-            NSLog(@"EndEncountered!");
-            [self handleEndEncountered:aStream];
+            if ([self respondsToSelector:@selector(handleEndEncountered:)]) {
+                [self handleEndEncountered:aStream];
+            }
             // ignore
         } break;
         default: {
@@ -71,5 +102,14 @@
             assert(NO);
         } break;
     }
+}
+
++(void)cancelStreanControlWithID:(NSUInteger)streamControlID
+{
+    NSMutableDictionary *streamControlList = [self streamControlList];
+    IPaSimpleFTPStreamControl *streamCtrl = streamControlList[@(streamControlID)];
+    [streamCtrl stop];
+    [streamCtrl destroyStreamControl];
+    
 }
 @end

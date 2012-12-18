@@ -7,12 +7,9 @@
 //
 
 #import "IPaSimpleFTPStreamControl.h"
-typedef enum {
-    IPaSimpleFTPDownloadControlResultCode_WriteFail = -3,
-    IPaSimpleFTPDownloadControlResultCode_ReadFail = -2,
-    IPaSimpleFTPDownloadControlResultCode_Fail = -1,
-    IPaSimpleFTPDownloadControlResultCode_Complete = 1,
-}IPaSimpleFTPDownloadControlResultCode;
+#import "IPaSimpleFTPStreamControlDefine.h"
 @interface IPaSimpleFTPDownloadControl : IPaSimpleFTPStreamControl
--(void)downloadURL:(NSURL*)URL toFilePath:(NSString*)filePath complete:(void (^)(IPaSimpleFTPDownloadControlResultCode))complete;
+//-(void)downloadURL:(NSURL*)URL toFilePath:(NSString*)filePath complete:(void (^)(IPaSimpleFTPDownloadControlResultCode))complete;
+
+-(void)downloadURL:(NSURL*)URL toFilePath:(NSString*)filePath complete:(void (^)(IPaSimpleFTPDownloadControlResultCode))complete progressCallback:(void (^)(CGFloat))progressCallback;
 @end

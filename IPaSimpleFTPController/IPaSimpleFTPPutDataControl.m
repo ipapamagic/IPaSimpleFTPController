@@ -17,6 +17,7 @@ enum {
 {
     NSOutputStream *            outputStream;
     void (^completeCB)(IPaSimpleFTPPutDataControlResultCode);
+    void (^progressCB)(CGFloat);
     //回傳上傳百分比的callback
 
     size_t            bufferOffset;
@@ -39,14 +40,18 @@ enum {
     }
     currentData = nil;
     completeCB = nil;
+    progressCB = nil;
     currentURL = nil;
 }
 
--(void)putData:(NSData*)data toURL:(NSURL*)URL complete:(void (^)(IPaSimpleFTPPutDataControlResultCode))complete
+-(void)putData:(NSData*)data toURL:(NSURL*)URL complete:(void (^)(IPaSimpleFTPPutDataControlResultCode))complete progressCallback:(void (^)(CGFloat))progressCallback
 {
     [self stop];
     if (complete != nil) {
         completeCB = [complete copy];
+    }
+    if (progressCallback != nil) {
+        progressCB = [progressCallback copy];
     }
     currentURL = [URL copy];
  
@@ -55,7 +60,7 @@ enum {
     
     CFWriteStreamRef ftpStream = CFWriteStreamCreateWithFTPURL(NULL, (__bridge CFURLRef) URL);
     assert(ftpStream != NULL);
-    
+    CFWriteStreamSetProperty(ftpStream, kCFStreamPropertyFTPUsePassiveMode, (self.isPassiveMode)?kCFBooleanTrue:kCFBooleanFalse);
     outputStream = (__bridge_transfer NSOutputStream *) ftpStream;
     
     bufferOffset = 0;
@@ -85,6 +90,8 @@ enum {
         void (^complete)(IPaSimpleFTPPutDataControlResultCode) = [completeCB copy];
         [self stop];
         complete(IPaSimpleFTPPutDataControlResultCode_Complete);
+        
+        [self destroyStreamControl];
         return;
     }
     else  {
@@ -95,11 +102,15 @@ enum {
             void (^complete)(IPaSimpleFTPPutDataControlResultCode) = [completeCB copy];
             [self stop];
             complete(IPaSimpleFTPPutDataControlResultCode_WriteByteError);
+            
+            [self destroyStreamControl];
         } else {
             bufferOffset += bytesWritten;
             
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:IPaSimpleFTPPutDataControl_Noti_Progress object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys:IPaSimpleFTPPutDataControl_NotiKey_URL,currentURL,IPaSimpleFTPPutDataControl_NotiKey_ProgressValue,[NSNumber numberWithFloat:bufferOffset / currentData.length],  nil]];
+            if (progressCB) {
+                progressCB((CGFloat)(bufferOffset / (CGFloat)currentData.length));
+            }
         }
     }
 }
@@ -110,6 +121,7 @@ enum {
     void (^complete)(IPaSimpleFTPPutDataControlResultCode) = [completeCB copy];
     [self stop];
     complete(IPaSimpleFTPPutDataControlResultCode_ErrorOccurred);
+    [self destroyStreamControl];
 }
 #pragma mark - NSStreamDelegate
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode

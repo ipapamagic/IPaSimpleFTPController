@@ -7,12 +7,7 @@
 //
 
 #import "IPaSimpleFTPStreamControl.h"
-typedef enum {
-    IPaSimpleFTPCreateFolderControlResultCode_Fail = -1,
-    IPaSimpleFTPCreateFolderControlResultCode_FolderExist = 0,
-    IPaSimpleFTPCreateFolderControlResultCode_Complete = 1,
-    
-}IPaSimpleFTPCreateFolderControlResultCode;
+#import "IPaSimpleFTPStreamControlDefine.h"
 @interface IPaSimpleFTPCreateFolderControl : IPaSimpleFTPStreamControl
 -(void)createFolderWithURL:(NSURL*)URL complete:(void (^)(IPaSimpleFTPCreateFolderControlResultCode))complete;
 @end
